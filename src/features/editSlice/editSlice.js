@@ -55,15 +55,12 @@ const editSlice = createSlice({
             console.error("Invalid payload structure in editPostItem",action.payload);
           }
     },
-//     updatedPostItem: (state, action) => {
-//         const updatedPost = action.payload; // Assuming the payload contains the updated post
-//   const existingPostIndex = state.posts.findIndex(post => post.id === updatedPost.id);
-
-//   if (existingPostIndex !== -1) {
-//     // Replace the existing post with the updated one
-//     state.posts[existingPostIndex] = updatedPost;
-//   }
-//       },
+    updatedPostItem: (state, action) => {
+        console.log(action.payload,"updated  post action");
+        const updatedPost = action.payload; // Assuming the payload contains the updated post
+const posts = state.posts.filter((post) => post.id === updatedPost.id);
+state.posts = [...posts,action.payload]
+      },
   },
   extraReducers: (builder) => {
     builder
@@ -86,8 +83,8 @@ const editSlice = createSlice({
 });
 
 export default editSlice.reducer;
-export const { editPostItem,setPostEdit,resetEdit } = editSlice.actions;
-// Add a separate action to update the post in the state
-export const updatedPostItem = (updatedPost) => (dispatch) => {
-    dispatch(editPostItem({ item: updatedPost }));
-  };
+export const { editPostItem,setPostEdit,updatedPostItem,resetEdit } = editSlice.actions;
+// // Add a separate action to update the post in the state
+// export const updatedPostItem = (updatedPost) => (dispatch) => {
+//     dispatch(editPostItem({ item: updatedPost }));
+//   };
