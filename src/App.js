@@ -16,7 +16,7 @@ function App() {
 
   return (
     <div className="container">
-   <NewPost {...posts} />
+   <NewPost posts={posts} />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Posts posts={posts} />} />      

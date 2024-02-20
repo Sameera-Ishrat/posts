@@ -1,70 +1,90 @@
-import { createSlice ,createAsyncThunk  } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 import axios from "axios";
 
-export const fetchPosts = createAsyncThunk("posts/fetchPosts" , async(_,thunkAPI) => {
-try {
-    const response = await axios.get("https://jsonplaceholder.typicode.com/posts");
-    console.log(response.data);
-    return response.data;
-}catch(error) {
-return thunkAPI.rejectWithValue({error: error.message});
-}
-});
-
-export const deletePost = createAsyncThunk("posts/deletePost" , async(id,thunkAPI) => {
+export const fetchPosts = createAsyncThunk(
+  "posts/fetchPosts",
+  async (_, thunkAPI) => {
     try {
-        const response = await axios.delete(`https://jsonplaceholder.typicode.com/posts/${id}`);
-        console.log(response.data);
-        return id;
-    }catch(error) {
-    return thunkAPI.rejectWithValue({error: error.message});
+      const response = await axios.get(
+        "https://jsonplaceholder.typicode.com/posts"
+      );
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
     }
-});
+  }
+);
 
-
-
+export const deletePost = createAsyncThunk(
+  "posts/deletePost",
+  async (id, thunkAPI) => {
+    try {
+      const response = await axios.delete(
+        `https://jsonplaceholder.typicode.com/posts/${id}`
+      );
+      console.log(response.data);
+      return id;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
 
 const initialState = {
-    posts : [],
-    loading : false,
-    error:null
-}
+  posts: [],
+  loading: false,
+  error: null,
+};
 const postSlice = createSlice({
-name : 'posts',
-initialState,
-reducers : {
-createPost : (state,action) => {
-    state.posts.unshift(action.payload)
-},
-// Add a reducer for updating the post in the state
-setPost : (state,action) => {
-    state.posts = action.payload;
-},
-updatePost: (state, action) => {
-    const index = state.posts.findIndex(post => post.id === action.payload.id);
-    if (index !== -1) {
-      state.posts[index] = action.payload;
-    }
+  name: "posts",
+  initialState,
+  reducers: {
+    createPost: (state, action) => {
+      state.posts.unshift(action.payload);
+    },
+    // Add a reducer for updating the post in the state
+    setPost: (state, action) => {
+      state.posts = action.payload;
+    },
+    // updatePost: (state, action) => {
+    //   const index = state.posts.findIndex(
+    //     (post) => post.id === action.payload.id
+    //   );
+    //   if (index !== -1) {
+    //     console.log("Updating post:", action.payload);
+    //     console.log("Current state before update:", state.posts.toString());
+
+    //     // Ensure immutability by creating a new array
+    //     state.posts = [...state.posts];
+    //     state.posts[index] = action.payload;
+
+    //     console.log("Current state after update:", state.posts);
+    //   }
+    // },
   },
-},
-extraReducers : (builder) => {
-    builder.addCase(fetchPosts.pending,(state,action) => {
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchPosts.pending, (state, action) => {
         state.loading = true;
-    }).addCase(fetchPosts.fulfilled,(state,action) =>{
-state.loading = false;
-state.posts = action.payload;
-    }).addCase(fetchPosts.rejected,(state,action) =>{
-        console.log(action.payload,"Rejected");
+      })
+      .addCase(fetchPosts.fulfilled, (state, action) => {
+        state.loading = false;
+        state.posts = action.payload;
+      })
+      .addCase(fetchPosts.rejected, (state, action) => {
+        console.log(action.payload, "Rejected");
         state.loading = false;
         state.error = action.error;
-    }).addCase(deletePost.fulfilled,(state,action) =>{
+      })
+      .addCase(deletePost.fulfilled, (state, action) => {
         state.loading = false;
-        state.error = '';
-        console.log(action.payload,"for delete post");
-       state.posts = state.posts.filter((post) => post.id !== action.payload);    
-    })
-}
-})
+        state.error = "";
+        console.log(action.payload, "for delete post");
+        state.posts = state.posts.filter((post) => post.id !== action.payload);
+      });
+  },
+});
 export default postSlice.reducer;
-export const {createPost,setPost,updatePost}  = postSlice.actions;
+export const { createPost, setPost, updatePost } = postSlice.actions;

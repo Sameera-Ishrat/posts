@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { UseDispatch, useDispatch, useSelector } from "react-redux";
 import { createPost } from "../features/posts/postSlice";
-import { resetEdit,updatedPostItem } from "../features/editSlice/editSlice";
+import { resetEdit, updatedPostItem } from "../features/editSlice/editSlice";
 
 import { editPost, setPostEdit } from "../features/editSlice/editSlice";
 
-const NewPost = ({ editMode, editData, posts }) => {
+const NewPost = ({ posts }) => {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -14,6 +14,7 @@ const NewPost = ({ editMode, editData, posts }) => {
 
   const dispatch = useDispatch();
   const { item, edit } = useSelector((state) => state.postEdit);
+  const postState = useSelector((state) => state.postEdit);
   useEffect(() => {
     if (edit && item) {
       setTitle(item.title || "");
@@ -24,7 +25,8 @@ const NewPost = ({ editMode, editData, posts }) => {
     }
   }, [item, edit]);
 
-  const submitHandler = async(e) => {
+  const submitHandler = async (e) => {
+    console.log("submit button clicked");
     e.preventDefault();
     if (!title || !body) {
       setErrorMessage("Please enter a title and body");
@@ -33,51 +35,39 @@ const NewPost = ({ editMode, editData, posts }) => {
 
     const postData = {
       item: {
-        id: editMode ? item.id : Math.random().toString(),
+        id: edit ? item.id : Math.random().toString(),
         title,
         body,
       },
       edit: false, // Reset edit state after updating a post
     };
-    if (editMode) {
-      dispatch(editPost(postData.item))
-        .then((action) => {
-          if (editPost.fulfilled.match(action)) {
-               // Dispatch updatedPostItem to update the post in the state
-        dispatch(updatedPostItem(action.payload));
-        dispatch(setPostEdit(postData));
-          }
-        })
-        .catch((error) => {
-          console.error("Failed to update post:", error);
-        });
-    } else {
-      dispatch(createPost(postData.item));
+    console.log("Submitting post data:", postData);
+
+    try {
+      if (edit) {
+        console.log("Attempting to dispatch editPost");
+        const action = await dispatch(editPost(postData.item));
+
+        if (editPost.fulfilled.match(action)) {
+          // State will be updated in the extraReducers section of editSlice
+          console.log("Edit post was fulfilled");
+          console.log("Updated state:", postState); // Log the current state
+        } else if (editPost.rejected.match(action)) {
+          console.error("Edit post was rejected:", action.error);
+        }
+      } else {
+        console.log("Attempting to dispatch createPost");
+        await dispatch(createPost(postData.item));
+      }
+    } catch (error) {
+      console.error("Failed to update/create post:", error);
     }
-       // Reset the edit state after updating or creating changes .toggles button
-       dispatch(resetEdit());
+    /* Reset the edit state after updating or creating changes .toggles button*/
+    dispatch(resetEdit());
     setTitle("");
     setBody("");
     setErrorMessage("");
-  }
-
-  //   try {
-  //     if (editMode) {
-  //       const response = await dispatch(editPost(postData.item.id));
-  //       dispatch(updatedPostItem(postData.item)); // Update the post in the state
-  //       dispatch(setPostEdit(postData));
-  //     } else {
-  //       await dispatch(createPost(postData.item));
-  //     }
-  //     dispatch(resetEdit());
-  //     setTitle("");
-  //     setBody("");
-  //     setErrorMessage("");
-  //   } catch (error) {
-  //     console.error("Failed to update/create post:", error);
-  //   }
-  // };
-
+  };
 
   return (
     <div className="center form-style">
@@ -99,7 +89,7 @@ const NewPost = ({ editMode, editData, posts }) => {
           value={body}
           onChange={(e) => setBody(e.target.value)}
         ></textarea>
-        <button type="submit">{edit ? 'Update Post' : 'Create Post'}</button>
+        <button type="submit">{edit ? "Update Post" : "Create Post"}</button>
       </form>
     </div>
   );
