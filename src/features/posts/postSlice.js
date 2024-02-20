@@ -48,21 +48,6 @@ const postSlice = createSlice({
     setPost: (state, action) => {
       state.posts = action.payload;
     },
-    // updatePost: (state, action) => {
-    //   const index = state.posts.findIndex(
-    //     (post) => post.id === action.payload.id
-    //   );
-    //   if (index !== -1) {
-    //     console.log("Updating post:", action.payload);
-    //     console.log("Current state before update:", state.posts.toString());
-
-    //     // Ensure immutability by creating a new array
-    //     state.posts = [...state.posts];
-    //     state.posts[index] = action.payload;
-
-    //     console.log("Current state after update:", state.posts);
-    //   }
-    // },
   },
   extraReducers: (builder) => {
     builder

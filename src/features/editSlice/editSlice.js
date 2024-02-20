@@ -60,11 +60,9 @@ const editSlice = createSlice({
     },
     updatedPostItem: (state, action) => {
       const updatedPost = action.payload;
-      //create a new array with the updated post
-      state.posts = state.posts.filter((post) =>
+      state.posts = state.posts.map((post) =>
         post.id === updatedPost.id ? updatedPost : post
       );
-     
     },
   },
   extraReducers: (builder) => {
@@ -74,14 +72,34 @@ const editSlice = createSlice({
         state.error = null;
       })
       .addCase(editPost.fulfilled, (state, action) => {
+        // console.log("State before the edit post", state);
+        // state.loading = false;
+        // state.edit = false;
+        // const updatedPost = action.payload;
+        // state.item = updatedPost;
+        // if (updatedPost.id && updatedPost.title && updatedPost.body )
+        //  state.posts = [...state.posts, updatedPost];
+        // console.log("State after the edit post", state);
+        console.log("State before the edit post", {...state});
         state.loading = false;
         state.edit = false;
+      
         const updatedPost = action.payload;
+      
+        // Check if the post already exists in the array
+        const existingPostIndex = state.posts.findIndex(post => post.id === updatedPost.id);
+      
+        if (existingPostIndex !== -1) {
+          // If the post exists, update it in the array
+          state.posts[existingPostIndex] = updatedPost;
+        } else {
+          // If the post doesn't exist, add it to the array
+          state.posts = [...state.posts, updatedPost];
+        }
+      
         state.item = updatedPost;
-        state.posts = state.posts.map((post) =>
-          post.id === updatedPost.id ? updatedPost : post
-        );
-      })
+        console.log("State after the edit post", {...state});
+    })
       .addCase(editPost.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload.error.message;
