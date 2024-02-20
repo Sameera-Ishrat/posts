@@ -71,7 +71,7 @@ const NewPost = ({ posts }) => {
 
   return (
     <div className="center form-style">
-      <h1>Enter a new Post</h1>
+     {edit ? <h1>Update the post</h1> : <h1>Enter a new Post</h1>} 
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
 
       <form onSubmit={submitHandler}>

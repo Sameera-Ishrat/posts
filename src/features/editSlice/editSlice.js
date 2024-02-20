@@ -72,23 +72,17 @@ const editSlice = createSlice({
         state.error = null;
       })
       .addCase(editPost.fulfilled, (state, action) => {
-        // console.log("State before the edit post", state);
-        // state.loading = false;
-        // state.edit = false;
-        // const updatedPost = action.payload;
-        // state.item = updatedPost;
-        // if (updatedPost.id && updatedPost.title && updatedPost.body )
-        //  state.posts = [...state.posts, updatedPost];
-        // console.log("State after the edit post", state);
-        console.log("State before the edit post", {...state});
+        console.log("State before the edit post", { ...state });
         state.loading = false;
         state.edit = false;
-      
+
         const updatedPost = action.payload;
-      
+
         // Check if the post already exists in the array
-        const existingPostIndex = state.posts.findIndex(post => post.id === updatedPost.id);
-      
+        const existingPostIndex = state.posts.findIndex(
+          (post) => post.id === updatedPost.id
+        );
+
         if (existingPostIndex !== -1) {
           // If the post exists, update it in the array
           state.posts[existingPostIndex] = updatedPost;
@@ -96,14 +90,14 @@ const editSlice = createSlice({
           // If the post doesn't exist, add it to the array
           state.posts = [...state.posts, updatedPost];
         }
-      
+
         state.item = updatedPost;
-        console.log("State after the edit post", {...state});
-    })
+        console.log("State after the edit post", { ...state });
+      })
       .addCase(editPost.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload.error.message;
-        console.error("Error details:", action.payload.error.message);
+        console.error("Error details:", action.payload);
       });
   },
 });

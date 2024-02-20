@@ -45,9 +45,9 @@ const postSlice = createSlice({
       state.posts.unshift(action.payload);
     },
     // Add a reducer for updating the post in the state
-    setPost: (state, action) => {
-      state.posts = action.payload;
-    },
+    // setPost: (state, action) => {
+    //   state.posts = action.payload;
+    // },
   },
   extraReducers: (builder) => {
     builder
