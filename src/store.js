@@ -5,6 +5,6 @@ import editReducer from "./features/editSlice/editSlice";
 export const store = configureStore({
     reducer : {
 posts : postReducer,
-editPost: editReducer
+postEdit: editReducer
     }
 })

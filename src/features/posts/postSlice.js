@@ -38,7 +38,15 @@ createPost : (state,action) => {
     state.posts.unshift(action.payload)
 },
 // Add a reducer for updating the post in the state
-
+setPost : (state,action) => {
+    state.posts = action.payload;
+},
+updatePost: (state, action) => {
+    const index = state.posts.findIndex(post => post.id === action.payload.id);
+    if (index !== -1) {
+      state.posts[index] = action.payload;
+    }
+  },
 },
 extraReducers : (builder) => {
     builder.addCase(fetchPosts.pending,(state,action) => {
@@ -59,4 +67,4 @@ state.posts = action.payload;
 }
 })
 export default postSlice.reducer;
-export const {createPost}  = postSlice.actions;
+export const {createPost,setPost,updatePost}  = postSlice.actions;
